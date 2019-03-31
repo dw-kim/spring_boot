@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+    <style type="text/css">
+        body {
+            width: 100%;
+            margin: 20px;20px;20px;20px;
+            overflow: hidden;
+        };
+
+        .inputElement.title {
+            width: 40px;
+        };<
+        .inputElement.input {
+        };
+
+        .quotient {
+            width: 50%;
+            height: 50%;
+        }
+
+        .container{
+            margin: 20px;20px;20px;20px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div>
+    <div class="container">
+        <p1 class="inputElement title">URL</p1>
+        <input id="txtUrl" class="inputElement input" type="input" value="https://www.google.com">
+    </div>
+
+    <div class="container">
+        <p1 class="inputElement title">TYPE</p1>
+        <select id="sbType" class="inputElement input">
+            <option value="noneHTML">HTML코드 제외</option>
+            <option value="allHTML">Txt전체</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <p1>출력묶음단위(자연수)</p1>
+        <input id="constant" class="inputElement input" type="input">
+    </div>
+
+    <div class="container">
+        <input id="btnPrint" onmousedown="getURLInfo(this)" type="button" value="출력">
+    </div>
+    <div id="htmlArea" class="container">
+        <label style="width:50%;">몫 : <textarea id="quotient" class="outputElement quotient" style="width:50%; height:10%;"></textarea></label>
+
+    </div>
+
+    <div class="container">
+        <label style="width:50%;">나머지 : <textarea id="remainder" class="outputElement quotient" style="width:50%; height:10%;"></textarea></label>
+
+    </div>
+
+</div>
+</body>
+
+<script type="text/javascript">
+    function getURLInfo(obj){
+        var btn = document.getElementById('btnPrint');
+        btn.disabled = true;
+
+        let selectValue = $("#sbType option:selected").val();
+        let url = $("#txtUrl").val();
+        $.ajax({
+            type: "get",
+            url : "/tagInfo",
+            data: {
+                "type":selectValue,
+                "url":url
+            },
+            success: responseSccess,
+            error: responseError
+        });
+    }
+
+    function responseSccess(resdata) {
+        var btn = document.getElementById('btnPrint');
+        btn.disabled = false;
+        var constant = $("#constant").val();
+        var remainder = parseInt(resdata.length / constant) * constant;
+
+        $("#quotient").html(resdata.substring(0, remainder));
+        $("#remainder").html(resdata.substring(remainder, resdata.length));
+    }
+
+    function responseError(resdata){
+        alert(resdata);
+    }
+</script>
+</html>
